@@ -17,7 +17,7 @@ function vanLoan(F::Matrix, G::Matrix; dt::Number=1.0)
     return sigma, Q
 end
 
-function analyticQ(Mi,λ,σ²; Δt=1)
+function analyticQ(Mi,λ,γ; Δt=1)
     """
     Analyic derivation of ∫_0^Δt F(t)QcF(t)'dt
     where F(t) = I + At and Qc = [0,1]*qc*[0 1]
@@ -25,7 +25,7 @@ function analyticQ(Mi,λ,σ²; Δt=1)
     dims = size(Mi,1)
 
     # Spectral noise of Matern-1/2 kernels
-    qc = 2*λ*σ²
+    qc = 2*λ*γ^2
 
     # Blocks of process noise covariance matrix
     B1 =  Δt^3/3.0 *qc*Mi
