@@ -9,7 +9,7 @@ using Plots
 default(label="", linewidth=3, margin=5Plots.pt)
 
 ## Load data
-file = jldopen("experiment-simulated/results/LGPASSM.jld2")
+file = load("experiment-simulated/results/LGPASSM.jld2")
 @unpack true_mcp_1, true_mcp_2, true_mcp_3, true_τ_a, tsteps, Δt, fitx_m, fitx_v, states, measurements, inputs, tsteps_val, sim_states, states_val, f1_pol3, f2_pol3, f3_pol3, l_star, γ_star = file
 f1 = Polynomial(f1_pol3.coeffs)
 f2 = Polynomial(f2_pol3.coeffs)
@@ -21,7 +21,7 @@ r(T_i,T_a) = (T_a - T_i)^3 ./ 100
 
 scatter(tsteps ./ 60, 
       transpose(measurements), 
-      xlabel="time [h]",
+      xlabel="time [min]",
       ylabel="temperature [C]",
       xticks = [0, 5, 10, 15],
       grid=true,
@@ -90,26 +90,41 @@ savefig("experiment-simulated/figures/VL+GPASSM-block3_fnest.png")
 
 SMSE_GPSSM = mean((sim_states - states_val).^2)
 
-plot(tsteps_val ./ 60,
-     sim_states';
-     # title = "GPSSM Simulation MSE = $SMSE_GPSSM",
-     linecolors = ["red" "blue" "orange"], 
-     # labels = ["simulated T₁" "simulated T₂" "simulatd T₃"],
-     xlabel = "time [h]", 
-     ylabel = "temperature [C]",
-     linewidth=4,
-     size=(400,300),
-     legend=:topleft,
-)
-plot!([1e8], [1e8], ylims=[22, 35], xlims=[0, 15], color="black", linestyle=:dash, label="identified")
-plot!([1e8], [1e8], color="black", linestyle=:solid, label="system")
-plot!(tsteps_val ./ 60, 
-      transpose(states_val), 
-      linewidth=5,
-      alpha = 0.5,
-      linecolors = ["red" "blue" "orange"], 
-      linestyle = :dash,
+scatter(tsteps_val[1:10:end] ./ 60, 
+         transpose(states_val[:,1:10:end]), 
+         markersize=10,
+         markercolors = ["red" "blue" "orange"], 
+         marker=:rect,
      #  labels = [L"$T_1$ true" L"$T_2$ true" L"$T_3$ true"],
 )
+scatter!([1e8], [1e8], ylims=[22, 35], xlims=[0, 15], marker=:x, color="gray", label="system")
+plot!(tsteps_val ./ 60,
+        sim_states';
+        linewidth=4,
+        linecolors = ["red" "blue" "orange"], 
+        linestroke
+     # labels = ["simulated T₁" "simulated T₂" "simulatd T₃"],
+        xlabel = "time [min]", 
+        ylabel = "temperature [C]",
+        size=(400,300),
+        legend=:topleft,
+)
+plot!([1e8], [1e8], color="black", linestyle=:solid, label="identified")
 
 savefig("experiment-simulated/figures/LGPASSM-simulations.png")
+
+## Simulation error
+plot(tsteps_val ./ 60,
+      transpose(states_val .- sim_states);
+      linewidth=4,
+      linecolors = ["red" "blue" "orange"], 
+     labels = [L"T_1" L"T_2" L"T_3"],
+     xlabel = "time [min]", 
+     ylabel = "error [C]",
+     size=(400,300),
+     legend=:topright,
+     legendfontsize=10,
+     guidefontsize=10,
+)
+
+savefig("experiment-simulated/figures/LGPASSM-simulation-errors.png")
