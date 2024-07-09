@@ -26,3 +26,4 @@ Manifest.toml
 *.mat
 archive/
 .vscode
+experiment-measured/

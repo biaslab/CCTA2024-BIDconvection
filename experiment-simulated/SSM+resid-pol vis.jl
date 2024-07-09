@@ -79,7 +79,7 @@ savefig("experiment-simulated/figures/SSM+GPr-block3_fnest.png")
 
 ## Visualize simulation error
 
-SMSE_GPSSM = mean((sim_states - states_val).^2)
+SMSE_GPSSM = sqrt(mean((sim_states - states_val).^2))
 
 scatter(tsteps_val[1:10:end] ./ 60, 
      transpose(states_val[:,1:10:end]), 
@@ -88,7 +88,7 @@ scatter(tsteps_val[1:10:end] ./ 60,
      markercolors = ["red" "blue" "orange"], 
      marker=".",
 )
-scatter!([1e8], [1e8], ylims=[22, 35], xlims=[0, 16], marker='.', color="gray", label="system")
+scatter!([1e8], [1e8], ylims=[22, 38], xlims=[0, 16], marker='.', color="gray", label="system")
 plot!(tsteps_val ./ 60,
      sim_states',
      linewidth=4,
@@ -105,15 +105,15 @@ savefig("experiment-simulated/figures/SSM+resid-pol-simulations.png")
 ## Simulation errors
 
 plot(tsteps_val ./ 60,
-      transpose(states_val .- sim_states);
+      abs.(transpose(states_val .- sim_states));
       linewidth=4,
       linecolors = ["red" "blue" "orange"], 
      labels = [L"T_1" L"T_2" L"T_3"],
      xlabel = "time [min]", 
-     ylabel = "error [C]",
+     ylabel = "absolute error [C]",
      xlims=[0, 16],
      size=(400,300),
      legend=:topleft,
 )
 
-savefig("experiment-simulated/figures/SSM+resid-pol-simulation-errors.png")
+savefig("experiment-simulated/figures/SSM+resid-pol-simulation-errors-abs.png")

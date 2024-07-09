@@ -52,7 +52,7 @@ plot(tsteps ./ 60,
       size=(400,150),
 )
 
-savefig("experiment-simulated/figures/simulatedexp-inputs.png")
+# savefig("experiment-simulated/figures/simulatedexp-inputs.png")
 
 
 ## Visualize nonlinearity estimates
@@ -95,7 +95,7 @@ savefig("experiment-simulated/figures/VL+GPASSM-block3_fnest.png")
 
 ## Visualize simulation error
 
-SMSE_GPSSM = mean((sim_states - states_val).^2)
+SMSE_GPSSM = sqrt(mean((sim_states - states_val).^2))
 
 scatter(tsteps_val[1:10:end] ./ 60, 
      transpose(states_val[:,1:10:end]), 
@@ -121,15 +121,15 @@ savefig("experiment-simulated/figures/LGPASSM-simulations.png")
 
 ## Simulation error
 plot(tsteps_val ./ 60,
-      transpose(states_val .- sim_states);
+      abs.(transpose(states_val .- sim_states));
       linewidth=4,
       linecolors = ["red" "blue" "orange"], 
      labels = [L"T_1" L"T_2" L"T_3"],
      xlabel = "time [min]", 
-     ylabel = "error [C]",
+     ylabel = "absolute error [C]",
      xlims=[0, 16],
      size=(400,300),
-     legend=:topright,
+     legend=:topleft,
 )
 
-savefig("experiment-simulated/figures/LGPASSM-simulation-errors.png")
+savefig("experiment-simulated/figures/LGPASSM-simulation-errors-abs.png")
